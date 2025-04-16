@@ -1,16 +1,16 @@
-FROM python
+FROM docker.io/python:3.12.2-slim-bookworm AS python
 
 # stage 1
 
 ARG BUILD_ENV=local
 
-RUN apt-get update $$ apt-get install --no-install-recommends -y \
+RUN apt-get update && apt-get install --no-install-recommends -y \
     build-essential \
     libpq-dev
 
-COPY ./req .
+COPY ./requirements .
 
-RUN pip wheel --wheel-dir /usr/src/app/wheel \
+RUN pip wheel --wheel-dir /usr/src/app/wheels \
     -r ${BUILD_ENV}.txt
 
 # stage 2
@@ -22,17 +22,18 @@ ENV PYTHONUNBUFFERED=1
 ENV BUILD_ENV=${BUILD_ENV}
 WORKDIR ${APP_HOME}
 
-RUN apt-get update $$ apt-get install --no-install-recommends -y \
-    sudo git bash-completion nani ssh \
+RUN apt-get update && apt-get install --no-install-recommends -y \
+    sudo git bash-completion nano ssh \
     libpq-dev gettext \
     && apt-get purge -y --auto-remove -o APT::AutoRemove::RecommendsImportant=false \
     && rm -rf /var/lib/apt/lists/*
 
-RUN addgrupe --system django && \
+RUN addgroup --system django && \
     adduser --system --ingroup django django && \
     mkdir -p ${APP_HOME}/staticfiles && \
     chown django:django ${APP_HOME}/staticfiles && \
     chmod 755 ${APP_HOME}/staticfiles
+
 COPY --from=python /usr/src/app/wheels /wheels/
 RUN pip install --no-cache-dir --no-index --find-links=/wheels /wheels/* \
     && rm -rf /wheels/

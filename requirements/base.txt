@@ -1,0 +1,17 @@
+django
+python-dotenv
+djangorestframework
+django-countries
+django-phonenumber-field
+phonenumbers
+drf-spectacular
+pillow
+argon2-cffi
+djoser
+django-filter
+django-celery-email
+django-celery-beat
+cloudinary
+python-dateutil
+psycopg2-binary
+loguru
