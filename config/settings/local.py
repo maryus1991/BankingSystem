@@ -31,9 +31,5 @@ DOMAIN = getenv('DOMAIN')
 MAX_UPLOAD_SIZE = 1 * 1024 * 1024
 
 
-DATABASES = {
-    "default": {
-        "ENGINE": "django.db.backends.sqlite3",
-        "NAME": BASE_DIR / "db.sqlite3",
-    }
-}
+
+ALLOWED_HOSTS = ['localhost']

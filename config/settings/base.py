@@ -3,6 +3,7 @@ from pathlib import Path
 from django.conf.global_settings import PASSWORD_HASHERS
 from dotenv import load_dotenv
 from os import getenv, path
+from loguru import logger
 
 
 BASE_DIR = Path(__file__).resolve(strict=True).parent.parent.parent
@@ -118,3 +119,48 @@ AUTH_PASSWORD_VALIDATORS = [
 ]
 
 SITE_ID = 1
+
+LOGGING_CONFIG = None
+
+LOGURU_LOGGING = {
+    'handlers':[
+        {
+            "sink": BASE_DIR / "log/debug.log",
+            "level": "DEBUG",
+            "filter": lambda record: record['level'].no <= logger.level("WARNING").no,
+            "format": "{time:YYYY-MM-DD HH:mm:ss.SSSS} | {level:<8} | {name}:{function}:{line} - {message}",
+            "rotation": "10MB",
+            "retention": "30 days",
+            "compression": "zip",
+        },{
+            "sink": BASE_DIR / "log/error.log",
+            "level": "ERROR",
+            "format": "{time:YYYY-MM-DD HH:mm:ss.SSSS} | {level:<8} | {name}:{function}:{line} - {message}",
+            "rotation": "10MB",
+            "retention": "30 days",
+            "compression": "zip",
+            "backtrace": True,
+            "diagnose": True,
+        }
+    ]
+}
+
+logger.configure(**LOGURU_LOGGING)
+LOGGING = {
+    "version": 1,
+    "disable_existing_loggers": False,
+    "handles":{"loguru":{"class":"interceptor.InterceptorHandler"}},
+    "root": {"level": "INFO", "handlers": ["loguru"]},
+
+}
+
+DATABASES = {
+    "default": {
+        "ENGINE": "django.db.backends.postgresql",
+        "NAME":getenv("POSTGRES_DB"),
+        "USER":getenv("POSTGRES_USER"),
+        "PASSWORD":getenv("POSTGRES_PASSWORD"),
+        "HOST":getenv("POSTGRES_HOST"),
+        "PORT":getenv("POSTGRES_PORT"),
+    }
+}
