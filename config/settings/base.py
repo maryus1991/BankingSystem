@@ -4,6 +4,7 @@ from django.conf.global_settings import PASSWORD_HASHERS
 from dotenv import load_dotenv
 from os import getenv, path
 from loguru import logger
+from datetime import timedelta
 
 
 BASE_DIR = Path(__file__).resolve(strict=True).parent.parent.parent
@@ -61,7 +62,7 @@ ROOT_URLCONF = "config.urls"
 TEMPLATES = [
     {
         "BACKEND": "django.template.backends.django.DjangoTemplates",
-        "DIRS": [str(APPS_DIR / 'templates')],
+        "DIRS": [str(BASE_DIR / 'templates')],
         "APP_DIRS": True,
         "OPTIONS": {
             "context_processors": [
