@@ -37,4 +37,4 @@ ALLOWED_HOSTS = ['localhost']
 LOCKOUT_DURATION = timedelta(minutes=1)
 
 LOGIN_ATTEMPTS = 3
-OTP_EXPIRATION = timedelta(minutes=1)
+OTP_EXPIRATION = timedelta(minutes=2)

@@ -48,6 +48,8 @@ LOCAL_APPS = [
 
 INSTALLED_APPS = DJANGO_APPS + THIRD_PARTY_APPS + LOCAL_APPS
 
+AUTH_USER_MODEL = 'user_auth.User'
+
 MIDDLEWARE = [
     "django.middleware.security.SecurityMiddleware",
     "django.contrib.sessions.middleware.SessionMiddleware",
@@ -164,4 +166,18 @@ DATABASES = {
         "HOST":getenv("POSTGRES_HOST"),
         "PORT":getenv("POSTGRES_PORT"),
     }
+}
+
+SPECTACULAR_SETTINGS = {
+    'TITLE': str(getenv("BANK_NAME")) + 'API',
+    "DESCRIPTION": 'API BUILD for out bank system',
+    'VERSION': '1.0.0.',
+    'SERVE_INCLUDE_SCHEMA': False,
+    'LICENSE':{
+        'name':'MIT License',
+    }
+}
+
+REST_FRAMEWORK = {
+    "DEFAULT_SCHEMA_CLASS": "drf_spectacular.openapi.AutoSchema",
 }
