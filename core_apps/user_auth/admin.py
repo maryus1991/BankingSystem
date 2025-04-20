@@ -13,6 +13,7 @@ class CustomUserAdmin(UserAdmin):
     list_display = ('email','username' ,'first_name', 'last_name'
                     ,'is_staff', 'role', 'is_superuser')
     list_filter = ('is_staff', 'is_superuser', 'role', 'email')
+
     fieldsets = (
         (
             _("Auth Credentials"),
@@ -20,8 +21,8 @@ class CustomUserAdmin(UserAdmin):
                 'username',
                 'email',
                 'password'
-                )
-            }
+                ),
+            },
         ),
         (
             _("Personal Information"),
@@ -30,7 +31,7 @@ class CustomUserAdmin(UserAdmin):
                 'last_name',
                 'ID_NUMBER',
                 'role',
-            )}
+            ),}
         ),(
            _('Account Status'),
            {
@@ -38,15 +39,15 @@ class CustomUserAdmin(UserAdmin):
                    'account_status',
                    'failed_login_attempts',
                    'last_failed_login_attempts',
-               )
-           }
+               ),
+           },
         ),(
             _('Security'),{
                 'fields': (
                     'security_question',
                     'security_answer',
-                )
-            }
+                ),
+            },
         ),(
             _('Permissions'),{
                 'fields': (
@@ -55,17 +56,17 @@ class CustomUserAdmin(UserAdmin):
                     'groups',
                     'is_active',
                     "user_permissions",
-                )
-            }
+                ),
+            },
         ),(
             _('Dates'),{
                 'fields': (
                     'last_login',
                     'date_joined',
 
-                )
+                ),
             },
         ),
     )
-    search_fields = ('email','first_name','last_name','username')
-    ordering = ('email',)
+    search_fields = ('email','first_name','last_name','username', 'ID_NUMBER')
+    ordering = ('email','first_name','last_name','username')

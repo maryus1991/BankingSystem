@@ -57,7 +57,7 @@ class User(AbstractUser):
         choices=RoleChoices.choices,
         default=RoleChoices.CUSTOMER,
     )
-    failed_login_attempts = models.PositiveSmallIntegerField()
+    failed_login_attempts = models.PositiveSmallIntegerField(null=True)
     last_failed_login_attempts = models.DateTimeField(null=True, blank=True)
     otp = models.CharField(_('OTP'), max_length=6, blank=True)
     otp_expiry_date = models.DateTimeField(_('OTP Expiry Date'), null=True, blank=True)
@@ -132,4 +132,4 @@ class User(AbstractUser):
         return hasattr(self, 'role') and self.role == role_name
 
     def __str__(self):
-        return f'{self.full_name} - {self.get_role_display()}'
+        return f'{self.full_name()} - {self.get_role_display()}'

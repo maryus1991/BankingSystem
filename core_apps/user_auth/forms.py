@@ -1,5 +1,6 @@
 from django.contrib.auth.forms import UserCreationForm as BaseUserCreationForm
 from django.contrib.auth.forms import UserChangeForm as BaseUserChangeForm
+
 from django.core.exceptions import ValidationError
 from django.utils.translation import gettext_lazy as _
 
@@ -9,7 +10,7 @@ class UserCreationForm(BaseUserCreationForm):
     class Meta:
         model = User
         fields = ('email', 'ID_NUMBER', 'first_name', 'last_name', 'security_question',
-                  'security_answer', 'is_staff', 'is_superuser')
+                  'security_answer', 'is_staff', 'is_superuser', 'is_active')
 
 
     def clean_email(self):
