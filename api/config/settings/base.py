@@ -1,7 +1,9 @@
  
 from pathlib import Path
+from loguru import logger
+
 from dotenv import load_dotenv
-from os import path
+from os import path, getenv
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve(strict=True).parent.parent.parent
@@ -96,10 +98,16 @@ PASSWORD_HASHERS = [
 
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': BASE_DIR / 'db.sqlite3',
+        'ENGINE': 'django.db.backends.postgresql',
+        'HOST': getenv('POSTGRES_HOST'),
+        'NAME': getenv('POSTGRES_DB'),
+        'PORT': getenv('POSTGRES_PORT'),
+        'USER': getenv('POSTGRES_USER'),
+        'PASSWORD': getenv('POSTGRES_PASSWORD'),
+
     }
 }
+
 
 
 # Password validation
@@ -139,3 +147,80 @@ SITE_ID = 1
 
 STATIC_URL = '/static/'
 STATIC_ROOT = str(BASE_DIR / "staticfiles")
+
+
+
+LOGGING_CONFIG = None
+LOGURU_CONFIG = {
+    "handlers": [
+        {
+            "sink" : BASE_DIR / "logs/debug.log",
+            "level": "DEBUG",
+            "filter": lambda record: record["level"].no == logger.level("DEBUG").no,
+            "format":"{time:YYYY-MM-DD : HH:mm:ss.SSS} | {level: <8} | {name}:{function}:{line} - "
+                     "{message}",
+            "rotation": "10MB",
+            "retention": "30 days",
+            "compression" : "zip"
+        },
+        {
+            "sink" : BASE_DIR / "logs/info.log",
+            "level": "INFO",
+            "filter": lambda record: record["level"].no == logger.level("INFO").no,
+
+            "format":"{time:YYYY-MM-DD : HH:mm:ss.SSS} | {level: <8} | {name}:{function}:{line} - "
+                     "{message}",
+            "rotation": "10MB",
+            "retention": "30 days",
+            "compression" : "zip",
+            "backtrace": True,
+            "diagnose": True
+        },
+        {
+            "sink" : BASE_DIR / "logs/warning.log",
+            "level": "WARNING",
+            "filter": lambda record: record["level"].no == logger.level("WARNING").no,
+            "format":"{time:YYYY-MM-DD : HH:mm:ss.SSS} | {level: <8} | {name}:{function}:{line} - "
+                     "{message}",
+            "rotation": "10MB",
+            "retention": "30 days",
+            "compression" : "zip",
+            "backtrace": True,
+            "diagnose": True
+        },
+        {
+            "sink" : BASE_DIR / "logs/error.log",
+            "level": "ERROR",
+            "filter": lambda record: record["level"].no == logger.level("ERROR").no,
+
+            "format":"{time:YYYY-MM-DD : HH:mm:ss.SSS} | {level: <8} | {name}:{function}:{line} - "
+                     "{message}",
+            "rotation": "10MB",
+            "retention": "30 days",
+            "compression" : "zip",
+            "backtrace": True,
+            "diagnose": True
+        },
+        {
+            "sink" : BASE_DIR / "logs/critical.log",
+            "filter": lambda record: record["level"].no == logger.level("CRITICAL").no,
+            "level": "CRITICAL",
+             "format":"{time:YYYY-MM-DD : HH:mm:ss.SSS} | {level: <8} | {name}:{function}:{line} - "
+                     "{message}",
+            "rotation": "10MB",
+            "retention": "30 days",
+            "compression" : "zip",
+            "backtrace": True,
+            "diagnose": True
+        },
+
+    ],
+}
+logger.configure(**LOGURU_CONFIG)
+
+LOGGIN= {
+    "version":1,
+    "disable_existing_loggers": False,
+    "handlers": {"loguru": {"class": "interceptor.InterceptHandler"}},
+    "root": {'handlers': ["loguru"], "level":"DEBUG"}
+}
