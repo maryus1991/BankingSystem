@@ -21,12 +21,13 @@ while True:
     host="${POSTGRES_HOST}"
     )
     sys.stderr.write(f" PostgresSQL is Available ... \n")
+    break
 
   except  Exception as E:
     sys.stderr.write("Waiting for PostgresSQL to became available \n")
     if time.time() - start > suggest_unrecoverable_after :
       sys.stderr.write(f"got Error to connect : {E} \n")
-      time.sleep(3)
+    time.sleep(3)
 
 END
 

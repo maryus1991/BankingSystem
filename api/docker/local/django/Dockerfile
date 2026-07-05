@@ -1,4 +1,4 @@
-FROM docker.io/python3.14.5-slim-bookworm as python
+FROM docker.io/python:3.14-slim-bookworm as python
 
 # Stage 1: Build our dependency wheels
 FROM python AS python-build-stage
@@ -7,12 +7,12 @@ ARG BUILD_ENVIRONMENT=local
 
 RUN apt-get update && apt-get install --no-install-recommends -y \
     build-essential \
-    libpq-dev \
+    libpq-dev
 
 
 COPY ./requirements .
 
-RUN pip wheel --wheel-dir /usr/src/app/wheels -r {BUILD_ENVIRONMENT}.txt
+RUN pip wheel --wheel-dir /usr/src/app/wheels -r ${BUILD_ENVIRONMENT}.txt
 
 # Stage 2 : Run Stage
 
@@ -33,23 +33,24 @@ RUN apt-get update && apt-get install --no-install-recommends -y \
     && apt-get purge -y --auto-remove -o APT::AutoRemove::RecommendsImportant=false \
     && rm -rf /var/lib/apt/lists/*
 
-RUN addgroup --system django && \
-    adduser --system django django && \
-    mkdir -p {APP_HOME}/staticfiles &&
-    chown django:django ${APP_HOME}/staticfiles && \
-    chown 775 ${APP_HOME}/staticfiles
+RUN addgroup --system django
+RUN adduser --system django
+RUN mkdir -p ${APP_HOME}/staticfiles
+RUN chown -R django:django ${APP_HOME}/staticfiles
+RUN chmod -R 775 ${APP_HOME}/staticfiles
 
 COPY --from=python-build-stage /usr/src/app/wheels /wheels/
-RUN pip install --no-catch-dir --no-index --find-links=/wheels/ /wheels/*   && rm -rf /wheels/
+RUN pip install --no-cache-dir --no-index --find-links=/wheels/ /wheels/*   && rm -rf /wheels/
 
 COPY --chown=django:django ./docker/local/django/entrypoint.sh /entrypoint.sh
-COPY --chown=django:django ./docker/local/django/start.sh /start.sh
+COPY --chown=django:django ./docker/local/django/start.sh  /start.sh
 
 RUN sed -i 's/\r$//g' /entrypoint.sh /start.sh
-RUN chown +x /entrypoint.sh /start.sh
+RUN chmod +x /entrypoint.sh /start.sh
 
-COPY --chown+django:django . ${APP_HOME}
-
+COPY --chown=django:django . ${APP_HOME}
+RUN chmod u+rwx ${APP_HOME}/
+RUN chmod 770 ${APP_HOME}/logs/
 USER django
 
 ENTRYPOINT ["/entrypoint.sh"]
