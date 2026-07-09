@@ -10,6 +10,12 @@ down:
 down-v:
 	sudo docker compose -f local.yml down -v
 
+logs-f:
+	sudo docker compose -f local.yml logs -f
+
+logs:
+	sudo docker compose -f local.yml logs
+
 banker-config:
 	sudo docker compose -f local.yml config
 
@@ -27,6 +33,9 @@ superuser:
 
 flush:
 	sudo docker compose -f local.yml run --rm api sh -c "python manage.py flush"
+
+shell:
+	sudo docker compose -f local.yml run --rm api bash
 
 network-inspect:
 	sudo docker network inspect banker_local_nw

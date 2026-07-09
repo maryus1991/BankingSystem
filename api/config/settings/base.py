@@ -65,6 +65,7 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
+    'core_apps.user_auth.middleware.CustomHeaderMiddleware',
 ]
 
 ROOT_URLCONF = 'config.urls'
@@ -152,6 +153,20 @@ STATIC_ROOT = str(BASE_DIR / "staticfiles")
 AUTH_USER_MODEL = "user_auth.User"
 # AUTH_USER_MODEL = "core_apps.user_auth.User"
 
+REST_FRAMEWORK= {
+    "DEFAULT_SCHEMA_CLASS": "drf_spectacular.openapi.AutoSchema"
+}
+
+SPECTACULAR_SETTING = {
+    "TITLE": "NextGen Bank API",
+    "DESCRIPTION": "An API built for a banking system",
+    "VERSION": "1.0.0",
+    "SERV_INCLUDE_SCHEMA": False,
+    "LICENSE" : {
+        "name" : "GPL License",
+        "url": "https://opensource.org/license/gpl"
+    }
+}
 LOGGING_CONFIG = None
 LOGURU_CONFIG = {
     "handlers": [

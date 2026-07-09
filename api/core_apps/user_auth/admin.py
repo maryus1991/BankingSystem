@@ -24,7 +24,7 @@ class CustomUser(UserAdmin):
             {
                 "fields": (
                     "username",
-                    "emails",
+                    "email",
                     "password"
                 ),
             },
@@ -66,7 +66,7 @@ class CustomUser(UserAdmin):
                     "is_staff",
                     "is_superuser",
                     "groups",
-                    "user_permissions ",
+                    "user_permissions",
 
                 )
             },

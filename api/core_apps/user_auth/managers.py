@@ -45,7 +45,7 @@ class UserManager(DjangoUserManager):
 
 
         user = self.model(
-            username,
+            username=username,
             email=email,
             **extra_fields
         )
