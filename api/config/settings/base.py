@@ -149,7 +149,8 @@ SITE_ID = 1
 STATIC_URL = '/static/'
 STATIC_ROOT = str(BASE_DIR / "staticfiles")
 
-
+AUTH_USER_MODEL = "user_auth.User"
+# AUTH_USER_MODEL = "core_apps.user_auth.User"
 
 LOGGING_CONFIG = None
 LOGURU_CONFIG = {
