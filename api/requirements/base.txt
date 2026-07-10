@@ -16,3 +16,7 @@ python-dateutil
 psycopg2-binary
 dotenv
 loguru
+redis
+celery
+flower
+django-redis

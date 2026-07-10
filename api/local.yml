@@ -7,8 +7,6 @@ services:
     volumes:
       - .:/app:z
       - ./staticfiles:/app/staticfiles
-#    ports:
-#      - "8000:8000"
 
     expose:
       - "8000"
@@ -19,7 +17,63 @@ services:
     depends_on:
       - postgres
       - mailpit
+      - redis
+      - rabbitmq
+
     command: /start.sh
+
+    networks:
+      - banker_local_nw
+
+  redis:
+    image: redis:8.8-alpine3.23
+    command: redis-server --appendonly yes
+    networks:
+      - banker_local_nw
+
+  rabbitmq:
+    image: rabbitmq:3-management
+    ports:
+      - "5672:5672"
+      - "15672:15672"
+
+    volumes:
+      - rabbitmq_data:/var/lib/rabbitmq
+      - rabbitmq_log:/var/log/rabbitmq
+
+    networks:
+      - banker_local_nw
+
+  celeryworker:
+    <<: *api
+    user: "1000:1000"
+
+    command: /start-celeryworker.sh
+
+  flower:
+    <<: *api
+    ports:
+      - "5555:5555"
+    user: "1000:1000"
+
+    volumes:
+      - flower_db:/app/flower_db
+    command: /start-flower.sh
+
+  celerybeat:
+    build:
+      context: .
+      dockerfile: ./docker/local/django/Dockerfile
+    command: /start-celerybeat.sh
+    env_file:
+      - ./.envs/.env.local
+    user: "1000:1000"
+
+    depends_on:
+      - postgres
+      - mailpit
+      - redis
+      - rabbitmq
 
     networks:
       - banker_local_nw
@@ -81,3 +135,6 @@ volumes:
   banker_mailpit_db:
   banker_local_db:
   logs_store:
+  flower_db:
+  rabbitmq_data:
+  rabbitmq_log:

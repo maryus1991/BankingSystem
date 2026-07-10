@@ -37,7 +37,7 @@ RUN addgroup --system django
 RUN adduser --system django
 RUN mkdir -p ${APP_HOME}/staticfiles
 RUN chown -R django:django ${APP_HOME}/staticfiles
-RUN chmod -R 775 ${APP_HOME}/staticfiles
+RUN chmod -R 777 ${APP_HOME}/staticfiles
 
 COPY --from=python-build-stage /usr/src/app/wheels /wheels/
 RUN pip install --no-cache-dir --no-index --find-links=/wheels/ /wheels/*   && rm -rf /wheels/
@@ -45,12 +45,16 @@ RUN pip install --no-cache-dir --no-index --find-links=/wheels/ /wheels/*   && r
 COPY --chown=django:django ./docker/local/django/entrypoint.sh /entrypoint.sh
 COPY --chown=django:django ./docker/local/django/start.sh  /start.sh
 
-RUN sed -i 's/\r$//g' /entrypoint.sh /start.sh
-RUN chmod +x /entrypoint.sh /start.sh
+COPY --chown=django:django ./docker/local/django/celery/worker/start.sh  /start-celeryworker.sh
+COPY --chown=django:django ./docker/local/django/celery/beat/start.sh  /start-celerybeat.sh
+COPY --chown=django:django ./docker/local/django/celery/flower/start.sh  /start-flower.sh
+
+RUN sed -i 's/\r$//g' /entrypoint.sh /start.sh /start-flower.sh /start-celerybeat.sh /start-celeryworker.sh
+RUN chmod +x /entrypoint.sh /start.sh /start-flower.sh /start-celerybeat.sh /start-celeryworker.sh
 
 COPY --chown=django:django . ${APP_HOME}
-RUN chmod u+rwx ${APP_HOME}/
-RUN chmod 770 ${APP_HOME}/logs/
+RUN chmod 777 ${APP_HOME}/
+RUN chmod 777 ${APP_HOME}/logs/
 USER django
 
 ENTRYPOINT ["/entrypoint.sh"]
