@@ -39,3 +39,7 @@ LOCKOUT_DURATION = timedelta(minutes=1)
 LOGIN_ATTEMPTS= 3
 OTP_EXPIRATION= timedelta(minutes=1)
 SECURE_SSL_REDIRECT = False
+
+
+MEDIA_URL = '/media/'
+MEDIA_ROOT = str(BASE_DIR / "media")

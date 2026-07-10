@@ -22,4 +22,3 @@ urlpatterns = [
 admin.site.site_header = "NextGen Bank Admin"
 admin.site.site_title = "NextGen Bank Admin Portal"
 admin.site.index_title = "Welcome to NextGen Bank Admin Portal"
-

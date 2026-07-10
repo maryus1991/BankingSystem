@@ -4,7 +4,7 @@ from loguru import logger
 
 from dotenv import load_dotenv
 from os import path, getenv
-from datetime import timedelta
+from datetime import timedelta, date
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve(strict=True).parent.parent.parent
@@ -151,7 +151,12 @@ STATIC_URL = '/static/'
 STATIC_ROOT = str(BASE_DIR / "staticfiles")
 
 AUTH_USER_MODEL = "user_auth.User"
-# AUTH_USER_MODEL = "core_apps.user_auth.User"
+
+DEFAULT_BIRTH_DATE=date(1900,1,1)
+DEFAULT_DATE= date(2000,1,1)
+DEFAULT_EXPIRY_DATE = date(2030,1,1)
+DEFAULT_COUNTRY= "IR"
+DEFAULT_PHONE_NUMBER="+989373061991"
 
 REST_FRAMEWORK= {
     "DEFAULT_SCHEMA_CLASS": "drf_spectacular.openapi.AutoSchema"
