@@ -150,16 +150,64 @@ SITE_ID = 1
 STATIC_URL = '/static/'
 STATIC_ROOT = str(BASE_DIR / "staticfiles")
 
-AUTH_USER_MODEL = "user_auth.User"
 
+# ================== User Configs ==================
+AUTH_USER_MODEL = "user_auth.User"
 DEFAULT_BIRTH_DATE=date(1900,1,1)
 DEFAULT_DATE= date(2000,1,1)
 DEFAULT_EXPIRY_DATE = date(2030,1,1)
 DEFAULT_COUNTRY= "IR"
 DEFAULT_PHONE_NUMBER="+989373061991"
 
+
+# ================== API Service Config ==================
 REST_FRAMEWORK= {
-    "DEFAULT_SCHEMA_CLASS": "drf_spectacular.openapi.AutoSchema"
+    "DEFAULT_SCHEMA_CLASS": "drf_spectacular.openapi.AutoSchema",
+    "DEFAULT_AUTHENTICATED_CLASSES": [
+       "core_apps.common.cookie_auth.CookieAuthentication"
+    ],
+    "DEFAULT_PERMISSION_CLASSES": [
+       "rest_framework.permissions.IsAuthenticated"
+    ],
+    "DEFAULT_PAGINATION_CLASS": "rest_framework.paginator.PageNumberPagination",
+    "DEFAULT_FILTER_BACKEND": [
+        "django_filter.rest_framework.DjangoFilterBackend"
+    ],
+    "PAGE_SIZE": 10,
+    "DEFAULT_THROTTILE_CLASSES":[
+        "rest_framework.throttling.AnonRateThrottle",
+        "rest_framework.throttling.UserRateThrottle",
+    ],
+    "DEFAULT_THROTTLE_RATE":{
+        "anon": "50/day",
+        "user": "100/day",
+    }
+
+}
+
+SIMPLE_JWT={
+    "SIGNING_KEY":getenv("SIGNING_KEY"),
+    "ACCESS_TOKEN_LIFETIME": timedelta(minutes=15),
+    "REFRESH_TOKEN_LIFETIME": timedelta(hours=12),
+    "ROTATE_REFRESH_TOKENS": True,
+    "USER_ID_FIELD": "id",
+    "USER_ID_CLAIM": "user_id",
+
+}
+
+DJOSER = {
+    "USER_ID_FIELD":"id",
+    "LOGIN_FIELD":"email",
+    "TOKEN_MODEL":None,
+    "USER_CREATE_PASSWORD_RETYPE": True,
+    "SEND_ACTIVATION_EMAIL":True,
+    "PASSWORD_CHANGE_EMAIL_CONFIRMATION": True,
+    "PASSWORD_RESET_CONFORM_RETYPE": True,
+    "PASSWORD_RESET_CONFORM_URL": "password-reset/{uid}/{token}",
+    "ACTIVATION_URL": "activate/{uid}/{token}",
+    "SERIALIZERS": {
+        "user_create": "core_apps.user_auth.serializers.UserCreateSerializer"
+    }
 }
 
 SPECTACULAR_SETTING = {
@@ -172,6 +220,9 @@ SPECTACULAR_SETTING = {
         "url": "https://opensource.org/license/gpl"
     }
 }
+
+# =================== logging ======================
+
 LOGGING_CONFIG = None
 LOGURU_CONFIG = {
     "handlers": [
@@ -248,6 +299,9 @@ LOGGIN= {
 }
 
 
+
+# ================= celery ===================
+
 if USE_TZ:
     CELERY_TIMEZONE = TIME_ZONE
 
@@ -265,4 +319,12 @@ CELERY_TASK_SOFT_TIME_LIMIT =  60
 CELERY_BEAT_SCHEDULER = "django_celery_beat.schedulers:DatabaseScheduler"
 CELERY_WORKER_SEND_TASK_EVENTS = True
 
+
+# ================ cookies ====================
+
+COOKIE_NAME = "access"
+COOKIE_SAMESITE = "Lax"
+COOKIE_PATH = "/"
+COOKIE_HTTPONLY = True
+COOKIE_SECURE=getenv("COOKIE_SECURE", "True") == "True"
 

@@ -6,6 +6,7 @@ name = "pypi"
 [packages]
 python-dateutil = "*"
 celery-types = "*"
+djangorestframework-stubs = "*"
 
 [dev-packages]
 

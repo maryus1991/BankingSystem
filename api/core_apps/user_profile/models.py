@@ -116,7 +116,7 @@ class Profile(TimeStampedModel):
         return all(required_fields) and self.next_of_kin.exists()
 
     def __str__(self) -> str:
-        return f"{self.title} {self.user.get_full_name}'s Profile"
+        return f"{self.title} {self.user.full_name}'s Profile"
 
 class NextOfKin(TimeStampedModel):
     class Salutation(models.TextChoices):
