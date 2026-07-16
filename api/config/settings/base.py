@@ -6,23 +6,16 @@ from dotenv import load_dotenv
 from os import path, getenv
 from datetime import timedelta, date
 
-# Build paths inside the project like this: BASE_DIR / 'subdir'.
+
 BASE_DIR = Path(__file__).resolve(strict=True).parent.parent.parent
 APPS_DIR = BASE_DIR / "core_apps"
-
-
-# Quick-start development settings - unsuitable for production
-# See https://docs.djangoproject.com/en/6.0/howto/deployment/checklist/
-
-# SECURITY WARNING: keep the secret key used in production secret!
-
 
 local_env_file = path.join(BASE_DIR, ".envs", ".envs.local")
 if path.isfile(local_env_file):
     load_dotenv(local_env_file)
 
 
-# Application definition
+# ================== Application definition ==================
 
 DJANGO_APPS = [
     'django.contrib.admin',
@@ -57,6 +50,8 @@ LOCAL_APPS = [
 
 INSTALLED_APPS = DJANGO_APPS + THIRD_PARTY_APPS + LOCAL_APPS
 
+# ================== middleware ==================
+
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
@@ -68,7 +63,7 @@ MIDDLEWARE = [
     'core_apps.user_auth.middleware.CustomHeaderMiddleware',
 ]
 
-ROOT_URLCONF = 'config.urls'
+# ================== templates configs ==================
 
 TEMPLATES = [
     {
@@ -85,17 +80,11 @@ TEMPLATES = [
     },
 ]
 
-WSGI_APPLICATION = 'config.wsgi.application'
 
-PASSWORD_HASHERS = [
-    "django.contrib.auth.hashers.Argon2PasswordHasher",
-    "django.contrib.auth.hashers.PBKDF2PasswordHasher",
-    "django.contrib.auth.hashers.PBKDF2SHA1PasswordHasher",
-    "django.contrib.auth.hashers.BCryptSHA256PasswordHasher",
-    "django.contrib.auth.hashers.ScryptPasswordHasher",
-]
 
-# Database
+
+
+# ================== Database ==================
 # https://docs.djangoproject.com/en/6.0/ref/settings/#databases
 
 DATABASES = {
@@ -112,8 +101,7 @@ DATABASES = {
 
 
 
-# Password validation
-# https://docs.djangoproject.com/en/6.0/ref/settings/#auth-password-validators
+# ================== Password validation ==================
 
 AUTH_PASSWORD_VALIDATORS = [
     {
@@ -130,8 +118,16 @@ AUTH_PASSWORD_VALIDATORS = [
     },
 ]
 
+PASSWORD_HASHERS = [
+    "django.contrib.auth.hashers.Argon2PasswordHasher",
+    "django.contrib.auth.hashers.PBKDF2PasswordHasher",
+    "django.contrib.auth.hashers.PBKDF2SHA1PasswordHasher",
+    "django.contrib.auth.hashers.BCryptSHA256PasswordHasher",
+    "django.contrib.auth.hashers.ScryptPasswordHasher",
+]
 
-# Internationalization
+
+# ================== Internationalization ==================
 # https://docs.djangoproject.com/en/6.0/topics/i18n/
 
 LANGUAGE_CODE = 'en-us'
@@ -144,12 +140,14 @@ USE_TZ = True
 
 SITE_ID = 1
 
-# Static files (CSS, JavaScript, Images)
+# ================== Static files ================== (
 # https://docs.djangoproject.com/en/6.0/howto/static-files/
 
 STATIC_URL = '/static/'
 STATIC_ROOT = str(BASE_DIR / "staticfiles")
 
+WSGI_APPLICATION = 'config.wsgi.application'
+ROOT_URLCONF = 'config.urls'
 
 # ================== User Configs ==================
 AUTH_USER_MODEL = "user_auth.User"
@@ -169,7 +167,7 @@ REST_FRAMEWORK= {
     "DEFAULT_PERMISSION_CLASSES": [
        "rest_framework.permissions.IsAuthenticated"
     ],
-    "DEFAULT_PAGINATION_CLASS": "rest_framework.paginator.PageNumberPagination",
+    "DEFAULT_PAGINATION_CLASS": "rest_framework.pagination.PageNumberPagination",
     "DEFAULT_FILTER_BACKEND": [
         "django_filter.rest_framework.DjangoFilterBackend"
     ],
@@ -209,6 +207,7 @@ DJOSER = {
         "user_create": "core_apps.user_auth.serializers.UserCreateSerializer"
     }
 }
+
 
 SPECTACULAR_SETTING = {
     "TITLE": "NextGen Bank API",

@@ -1,20 +1,29 @@
+ARGS := $(wordlist 2,$(words $(MAKECMDGOALS)),$(MAKECMDGOALS))
+
+
 build:
-	sudo docker compose -f local.yml up --build -d --remove-orphans
+	sudo docker compose -f local.yml up $(ARGS) --build -d --remove-orphans
 
 up:
-	sudo docker compose -f local.yml up -d
+	sudo docker compose -f local.yml up $(ARGS) -d
+
+ps:
+	sudo docker compose -f local.yml ps $(ARGS) -a
 
 down:
-	sudo docker compose -f local.yml down
+	sudo docker compose -f local.yml down $(ARGS)
+
+restart:
+	sudo docker compose -f local.yml restart $(ARGS)
 
 down-v:
-	sudo docker compose -f local.yml down -v
+	sudo docker compose -f local.yml down $(ARGS) -v
 
 logs-f:
-	sudo docker compose -f local.yml logs -f
+	sudo docker compose -f local.yml logs -f $(ARGS)
 
-logs:
-	sudo docker compose -f local.yml logs
+log:
+	sudo docker compose -f local.yml logs $(ARGS)
 
 banker-config:
 	sudo docker compose -f local.yml config
@@ -34,8 +43,11 @@ superuser:
 flush:
 	sudo docker compose -f local.yml run --rm api sh -c "python manage.py flush"
 
-shell:
-	sudo docker compose -f local.yml run --rm api bash
+bash:
+	sudo docker compose -f local.yml run --rm $(ARGS) sh
+
+sh:
+	sudo docker compose -f local.yml run --rm $(ARGS) sh
 
 network-inspect:
 	sudo docker network inspect banker_local_nw
