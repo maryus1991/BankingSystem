@@ -77,7 +77,7 @@ class Profile(TimeStampedModel):
     employer_address = models.CharField(_("Employer Address"), max_length=200, null=True, blank=True)
     employer_city = models.CharField(_("Employer City"), max_length=200, null=True, blank=True)
     employer_state = models.CharField(_("Employer state"), max_length=50, null=True, blank=True)
-
+    # view_count = models.PositiveIntegerField(default=0)
     photo = models.ImageField(_("Photo"), blank=True, null=True)
     id_photo = models.ImageField(_("ID Photo"), blank=True, null=True)
     signature_photo = models.ImageField(_("Signature Photo"), blank=True, null=True)
