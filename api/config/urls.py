@@ -8,7 +8,7 @@ from drf_spectacular.views import (
     SpectacularSwaggerView
 )
 
-from core_apps.user_profile.views import Test
+
 
 urlpatterns = [
     path(settings.ADMIN_URL, admin.site.urls),
@@ -17,7 +17,7 @@ urlpatterns = [
     path("", SpectacularSwaggerView.as_view(url_name="schema"), name="swagger-ui"),
     # path("api/v1/schema/redoc-ui", SpectacularRedocView.as_view(url_name="schema"), name="redoc-ui"),
 
-    path("", Test.as_view(), name="home"),
+    path("api/v1/profile/", include("core_apps.user_profile.urls") , name="profile"),
 
     path("api/v1/auth/", include("djoser.urls")),
     path("api/v1/auth/", include("core_apps.user_auth.urls")),

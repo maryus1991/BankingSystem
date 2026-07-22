@@ -42,7 +42,7 @@ def send_account_locked_email(self):
     recipient_list = [self.email]
     context = {
         "user": self,
-        "lockout_duration": int(settings.LOCKOUT_DURATION.total_secound() // 60),
+        "lockout_duration": int(settings.LOCKOUT_DURATION.total_seconds() // 60),
         "site_name": settings.SITE_NAME,
 
     }

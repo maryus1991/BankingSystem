@@ -57,6 +57,7 @@ class CustomTokenCreateView(TokenCreateView):
                 status=status.HTTP_403_FORBIDDEN
             )
 
+
         user.reset_failed_login_attempts()
 
         otp = generate_otp()
@@ -77,6 +78,7 @@ class CustomTokenCreateView(TokenCreateView):
 
         try:
             serializer.is_valid(raise_exception=True)
+            return self._action(serializer)
 
         except Exception as E:
             email = request.data.get("email")
@@ -92,7 +94,7 @@ class CustomTokenCreateView(TokenCreateView):
                     return  Response({
                         "error": _(f"You have exceeded the maximum number of login attempts. "
                                    f"Your account has been locked for "
-                                   f"{settings.LOKOUT_DUARATION.total_seconds() / 60} minutes."
+                                   f"{settings.LOCKOUT_DURATION.total_seconds() / 60} minutes."
                                    f"An email has been send to you with further instructions ")
                     },
                         status=status.HTTP_403_FORBIDDEN,
@@ -107,7 +109,7 @@ class CustomTokenCreateView(TokenCreateView):
                     status=status.HTTP_403_FORBIDDEN,
                 )
 
-        return self._action(serializer)
+            return self._action(serializer)
 
 class CustomTokenRefreshView(TokenRefreshView):
     def post(self, request: Request, *args: Any, **kwargs:Any) -> Response:

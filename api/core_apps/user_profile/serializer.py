@@ -129,7 +129,7 @@ class ProfileListSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Profile
-        field = [
+        fields = [
             "full_name",
             "username",
             "photo",

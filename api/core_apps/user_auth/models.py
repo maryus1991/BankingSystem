@@ -104,15 +104,18 @@ class User(AbstractUser):
 
     @property
     def is_locked_out(self) -> bool:
-        if self.account_status == self.AccountStatus.LOCKED:
-            if (self.last_failed_login and
-                    (timezone.now() - self.last_failed_login)
-                    > settings.LOCKOUT_DURATION
-            ):
-                self.unlock_account()
-                return False
+        try:
+            if self.account_status == self.AccountStatus.LOCKED:
+                if (self.last_failed_login and
+                        (timezone.now() - self.last_failed_login)
+                        > settings.LOCKOUT_DURATION
+                ):
+                    self.unlock_account()
+                    return False
+                return True
+            return False
+        except Exception as E:
             return True
-        return False
 
     @property
     def full_name(self)->str:
