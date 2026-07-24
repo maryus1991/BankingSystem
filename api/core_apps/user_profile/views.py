@@ -1,7 +1,7 @@
-
 from typing import Any, List, Mapping
 from django.utils.translation import gettext_lazy as _
 # from cloudinary.provisioning import user
+from django.db import transaction
 from django.contrib import contenttypes
 from django.contrib.contenttypes.models import ContentType
 from django.db.models import QuerySet
@@ -9,6 +9,7 @@ from django.http import Http404
 from django.shortcuts import get_object_or_404
 from django.utils import timezone
 from django_filters.rest_framework import DjangoFilterBackend
+from kombu.asynchronous.aws.sqs import message
 from rest_framework import  status,filters,generics, serializers
 from rest_framework.pagination import PageNumberPagination
 from rest_framework.parsers import FormParser, JSONParser, MultiPartParser
@@ -17,8 +18,8 @@ from rest_framework.request import Request
 from core_apps.common.models import ContentView
 from core_apps.common.permissions import IsBranchManager
 from core_apps.common.renderers import GenricJSONRenderers
-from core_apps.user_profile.models import NextOfKin
-
+from core_apps.accounts.models import BankAccount
+from core_apps.accounts.utils import create_bank_account
 from .models import NextOfKin, Profile
 from .serializer import NextOfKinSerializer, ProfileListSerializer, ProfileSerializer
 
@@ -96,8 +97,42 @@ class ProfileDetailAPIView(generics.RetrieveUpdateAPIView):
 
         try:
             serializer.is_valid(raise_exception=True)
-            self.perform_update(serializer)
-            return Response(serializer.data)
+
+            with transaction.atomic():
+                updated_instance = serializer.save()
+
+                if updated_instance.is_complete_with_next_of_kin():
+                    existing_account = BankAccount.objects.filter(
+                        user = request.user,
+                        currency = updated_instance.account_currency,
+                        account_type= updated_instance.account_type,
+                    ).first()
+
+                    if not existing_account:
+                        bank_account = create_bank_account(
+                            request.user,
+                            currency=updated_instance.account_currency,
+                            account_type=updated_instance.account_type,
+                        )
+                        message = (
+                            _("Profile updated and new bank account created successfully, An email has been send")
+                        )
+                    else:
+                        message = (
+                            _("Profile updated successfully. No new account created as one aleatory exits for this type ")
+                        )
+                else:
+                    message = (
+                        _("Profile updated successfully. Please complete all required fields ans at least one next of kin to create bank account ")
+
+                    )
+                return Response({
+                    "message": message,
+                    "data":serializer.data
+                        },
+                    status=status.HTTP_200_OK
+             )
+
         except serializers.ValidationError as e:
             return Response({"error": e.detail}, status=status.HTTP_400_BAD_REQUEST)
         except Exception as e:

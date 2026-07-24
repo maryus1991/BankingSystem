@@ -14,6 +14,7 @@ from rest_framework import serializers
 
 from core_apps.common.models import ContentView
 from .models import Profile, NextOfKin
+from core_apps.accounts.models import BankAccount
 # from .tasks import upload_photo_to_cloudinary
 
 User = get_user_model()
@@ -56,6 +57,8 @@ class ProfileSerializer(serializers.ModelSerializer):
     is_photo = serializers.ImageField(write_only=True, required=False)
     signature_photo = serializers.ImageField(write_only=True, required=False)
     view_count = serializers.SerializerMethodField()
+
+
 
     class Meta:
         model = Profile
@@ -126,6 +129,8 @@ class ProfileListSerializer(serializers.ModelSerializer):
     email = serializers.EmailField(source="user.email", read_only=True)
     full_name = serializers.ReadOnlyField(source="user.full_name")
     photo = serializers.ImageField(write_only=True, required=False)
+    account_currency = serializers.ChoiceField(choices=BankAccount.AccountCurrency.choices)
+    account_type = serializers.ChoiceField(choices=BankAccount.AccountType.choices)
 
     class Meta:
         model = Profile
@@ -138,6 +143,8 @@ class ProfileListSerializer(serializers.ModelSerializer):
             "country_of_birth",
             "email",
             "phone_number",
+            "account_currency",
+            "account_type",
         ]
 
     def get_photo(self, obj: Profile) -> str |  None:
@@ -145,8 +152,6 @@ class ProfileListSerializer(serializers.ModelSerializer):
             return  obj.photo.url
         except AttributeError:
             return None
-
-
 
 
 

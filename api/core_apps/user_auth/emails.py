@@ -8,13 +8,16 @@ from celery import shared_task
 
 
 def _send_email(subject, recipient_list, context, template):
-    from_email = settings.DEFAULT_FROM_EMAIL
-    html_email = render_to_string(template, context)
-    plain_email = strip_tags(html_email)
-    email = EmailMultiAlternatives(subject, plain_email, from_email, recipient_list)
-    email.attach_file(settings.TEMPLATES[0]["DIRS"][0] +'/'+ template, "text/html")
 
-    return email
+
+        from_email = settings.DEFAULT_FROM_EMAIL
+        html_email = render_to_string(template, context)
+        plain_email = strip_tags(html_email)
+        email = EmailMultiAlternatives(subject, plain_email, from_email, recipient_list)
+        email.attach_file(settings.TEMPLATES[0]["DIRS"][0] +'/'+ template, "text/html")
+
+        return email
+
 
 @shared_task
 def send_otp_email(email_list, otp):

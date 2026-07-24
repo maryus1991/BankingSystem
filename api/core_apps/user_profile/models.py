@@ -7,7 +7,7 @@ from django_countries.fields import CountryField
 from phonenumber_field.modelfields import PhoneNumberField
 from django.utils.crypto import get_random_string
 from core_apps.common.models import TimeStampedModel
-
+from core_apps.accounts.models import BankAccount
 
 User = get_user_model()
 
@@ -77,6 +77,10 @@ class Profile(TimeStampedModel):
     employer_address = models.CharField(_("Employer Address"), max_length=200, null=True, blank=True)
     employer_city = models.CharField(_("Employer City"), max_length=200, null=True, blank=True)
     employer_state = models.CharField(_("Employer state"), max_length=50, null=True, blank=True)
+
+    account_currency = models.CharField(_("Currency"), max_length=20, choices=BankAccount.AccountCurrency, null=True, blank=True, default=BankAccount.AccountCurrency.TOMAN)
+    account_type = models.CharField(_("Currency"), max_length=20, choices=BankAccount.AccountType, null=True, blank=True, default=BankAccount.AccountType.SAVING)
+
     # view_count = models.PositiveIntegerField(default=0)
     photo = models.ImageField(_("Photo"), blank=True, null=True)
     id_photo = models.ImageField(_("ID Photo"), blank=True, null=True)
