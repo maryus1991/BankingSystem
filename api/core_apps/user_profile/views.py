@@ -2,14 +2,12 @@ from typing import Any, List, Mapping
 from django.utils.translation import gettext_lazy as _
 # from cloudinary.provisioning import user
 from django.db import transaction
-from django.contrib import contenttypes
 from django.contrib.contenttypes.models import ContentType
 from django.db.models import QuerySet
 from django.http import Http404
 from django.shortcuts import get_object_or_404
 from django.utils import timezone
 from django_filters.rest_framework import DjangoFilterBackend
-from kombu.asynchronous.aws.sqs import message
 from rest_framework import  status,filters,generics, serializers
 from rest_framework.pagination import PageNumberPagination
 from rest_framework.parsers import FormParser, JSONParser, MultiPartParser

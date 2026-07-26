@@ -5,7 +5,6 @@ from django.utils import timezone
 from djoser .views import TokenCreateView
 from djoser.views import User
 from loguru import logger
-from oauthlib.oauth1.rfc5849.endpoints import access_token
 from rest_framework import permissions, status
 from rest_framework.request import Request
 from rest_framework.response import Response
