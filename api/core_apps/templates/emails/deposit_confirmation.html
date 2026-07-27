@@ -1,0 +1,26 @@
+{% extends "emails/base.html" %}
+{% load humanize %}
+
+{% block title %}
+    Deposit Conformation
+{% endblock %}
+
+{% block content %}
+    <h2>    Deposit Conformation</h2>
+    <p> Dear {{ user.full_name }} </p>
+    <p> We are pleased to inform you that a deposit has been made to your account </p>
+    <p>Details of the transaction </p>
+
+    <ul>
+        <li><strong>Amount: {{amount|intcomma}} {{currency}}</strong></li>
+        <li><strong>Account Number: {{ account_number }}</strong></li>
+        <li><strong>New Balance: {{ new_balance|intcomma }} {{ currency }}</strong></li>
+    </ul>
+
+
+    <p>If you did not authorize this transaction or have any question, please contact out customer care</p>
+    <p>If you have any question, please don't hesitate to contact out customer support </p>
+
+    <p>Best Regards, </p>
+    <p> <strong> The {{site_name}} Team </strong> </p>
+{% endblock %}
