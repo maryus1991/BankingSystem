@@ -2,7 +2,6 @@ from random import randint
 from typing import Any
 
 from django.utils import timezone
-from phonenumbers.geocoder import description_for_number
 from rest_framework import generics, status, serializers
 from rest_framework.request import Request
 from rest_framework.response import Response
@@ -12,7 +11,10 @@ from decimal import  Decimal
 from loguru import logger
 from core_apps.common.permissions import IsAccountExecutive, IsTeller
 from core_apps.common.renderers import GenricJSONRenderers
-
+from django_filters.rest_framework import DjangoFilterBackend
+from django.db.models import Q
+from rest_framework.filters import OrderingFilter
+from dateutil import parser
 
 from .models import BankAccount, Transaction
 from .serializers import (
@@ -32,7 +34,64 @@ from .emails import (
     send_withdrawal_email,
     send_transfer_otp_email
 )
+from .pagination import StandardResultSetPagination
 
+class TransactionListAPIView(generics.ListAPIView):
+    serializer_class = TransactionSerializer
+    pagination_class =  StandardResultSetPagination
+    filter_backends = [DjangoFilterBackend, OrderingFilter]
+    ordering_fields = ["created_at", "amount"]
+    ordering  = ["-created_at"]
+
+    def get_queryset(self):
+        user = self.request.user
+        queryset = Transaction.objects.filter(
+            Q(sender=user) | Q(receiver=user)
+        )
+
+        start_date = self.request.query_params.get("start_date")
+        end_date = self.request.query_params.get("end_date")
+        account_number = self.request.query_params.get("account_number")
+
+        if start_date:
+            try:
+                start_date= parser.parse(start_date)
+                queryset = queryset.filter(created_at__gte=start_date)
+            except ValueError:
+                pass
+
+        if end_date:
+            try:
+                end_date= parser.parse(end_date)
+                queryset = queryset.filter(created_at__lte=end_date)
+            except ValueError:
+                pass
+
+        if account_number:
+            try:
+                account = BankAccount.objects.get(
+                    account_number=account_number, user=user
+                )
+                queryset = queryset.filter(Q(sender_account=account) | Q(receiver_account=account))
+            except BankAccount.DoesNotExist:
+                queryset = Transaction.objects.none()
+
+        return queryset
+
+    def list(self, request:Request, *args:Any, **kwargs:Any)-> Response:
+        response = super().list(request, *args, **kwargs)
+
+        account_number = request.query_params.get("account_number")
+
+        if account_number:
+            logger.info(
+                "User {} successfully retrieved transaction for account: {}".format(request.user.email, account_number)
+            )
+        else:
+            logger.info(
+                 "User {} retrieved transactions for all accounts".format(request.user.email)
+            )
+        return response
 
 class VerifiedOTPView(generics.CreateAPIView):
     serializer_class = OTPVerificationSerializer
@@ -130,6 +189,7 @@ class VerifiedOTPView(generics.CreateAPIView):
             status=status.HTTP_200_OK
         )
 
+
 class VerifySecurityQuestionView(generics.CreateAPIView):
     serializer_class = SecurityQuestionSerializer
     renderer_classes = [GenricJSONRenderers]
@@ -154,6 +214,7 @@ class VerifySecurityQuestionView(generics.CreateAPIView):
             serializer.errors,
             status.HTTP_400_BAD_REQUEST
         )
+
 
 class InitiateTransferView(generics.CreateAPIView):
     serializer_class = TransactionSerializer
@@ -205,6 +266,7 @@ class InitiateTransferView(generics.CreateAPIView):
         return  Response(
             serializer.errors, status=status.HTTP_400_BAD_REQUEST
         )
+
 
 class InitiateWithdrawalView(generics.CreateAPIView):
     serializer_class = TransactionSerializer
@@ -283,6 +345,7 @@ class InitiateWithdrawalView(generics.CreateAPIView):
             status=status.HTTP_200_OK
         )
 
+
 class VerifyUsernameAndWithdrawAPIView(generics.CreateAPIView):
     serializer_class = UsernameVerificationSerializer
     renderer_classes = [GenricJSONRenderers]
@@ -357,6 +420,7 @@ class VerifyUsernameAndWithdrawAPIView(generics.CreateAPIView):
         status=status.HTTP_200_OK
         )
 
+
 class AccountVerificationView(generics.UpdateAPIView):
     queryset = BankAccount.objects.all()
     serializer_class = AccountVerificationSerializer
@@ -423,6 +487,7 @@ class AccountVerificationView(generics.UpdateAPIView):
                 serializer.errors,
                 status=status.HTTP_400_BAD_REQUEST
             )
+
 
 class DepositView(generics.CreateAPIView):
     serializer_class = DepositSerializer

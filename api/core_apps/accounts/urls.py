@@ -6,7 +6,8 @@ from .views import (
     VerifyUsernameAndWithdrawAPIView,
     InitiateTransferView,
     VerifiedOTPView,
-    VerifySecurityQuestionView
+    VerifySecurityQuestionView,
+    TransactionListAPIView
 )
 
 
@@ -21,4 +22,5 @@ urlpatterns = [
     path("transfer/initiate/", InitiateTransferView.as_view(), name="transfer-initiate"),
     path("transfer/verify/otp/", VerifiedOTPView.as_view(), name="transfer-verify-otp"),
     path("transfer/verify/security-question/", VerifySecurityQuestionView.as_view(), name="transfer-verify-security-question"),
+    path("transactions/", TransactionListAPIView.as_view(), name="transaction-list"),
 ]
