@@ -20,3 +20,4 @@ redis
 celery
 flower
 django-redis
+reportlab

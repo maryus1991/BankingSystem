@@ -7,6 +7,7 @@ name = "pypi"
 python-dateutil = "*"
 celery-types = "*"
 djangorestframework-stubs = "*"
+reportlab = "*"
 
 [dev-packages]
 

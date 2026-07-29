@@ -1,21 +1,24 @@
 from random import randint
 from typing import Any
+from decimal import  Decimal
+from loguru import logger
+from dateutil import parser
+from datetime import timedelta
 
 from django.utils import timezone
-from rest_framework import generics, status, serializers
+from rest_framework import generics, status, serializers, request
 from rest_framework.request import Request
 from rest_framework.response import Response
 from django.db import transaction
-
-from decimal import  Decimal
-from loguru import logger
-from core_apps.common.permissions import IsAccountExecutive, IsTeller
-from core_apps.common.renderers import GenricJSONRenderers
+from rest_framework.views import APIView
 from django_filters.rest_framework import DjangoFilterBackend
 from django.db.models import Q
 from rest_framework.filters import OrderingFilter
-from dateutil import parser
 
+from core_apps.common.permissions import IsAccountExecutive, IsTeller
+from core_apps.common.renderers import GenricJSONRenderers
+
+from .tasks import generate_transaction_pdf
 from .models import BankAccount, Transaction
 from .serializers import (
     AccountVerificationSerializer,
@@ -35,6 +38,47 @@ from .emails import (
     send_transfer_otp_email
 )
 from .pagination import StandardResultSetPagination
+
+
+class TransactionPDFView(APIView):
+    renderer_classes = [GenricJSONRenderers]
+    object_label = "transaction_pdf"
+
+    def post(self, request:Request)-> Response:
+        user = request.user
+        start_date = request.data.get("start_date") or request.query_params.get("start_date")
+        end_date = request.data.get("end_date") or request.query_params.get("end_date")
+        account_number = request.data.get("account_number") or request.query_params.get("account_number")
+
+        if not end_date:
+            end_date = timezone.now().isoformat()
+
+        if not start_date:
+            start_date = (
+                (parser.parse(end_date) - timedelta(days=30)).date().isoformat()
+            )
+
+        try:
+            start_date = parser.parse(start_date).date().isoformat()
+            end_date = parser.parse(end_date).date().isoformat()
+
+        except ValueError as e:
+            return Response(
+                {"error": f"Invalid date format: {str(e)}"},
+                status=status.HTTP_400_BAD_REQUEST
+            )
+
+        generate_transaction_pdf.delay(user.id, start_date, end_date, account_number)
+        return Response(
+            {
+                "message": "Your Transaction history PDF is being generated and will be sent to your email shortly",
+                "email": user.email
+            }
+            ,status=status.HTTP_202_ACCEPTED
+        )
+
+
+
 
 class TransactionListAPIView(generics.ListAPIView):
     serializer_class = TransactionSerializer
@@ -92,6 +136,7 @@ class TransactionListAPIView(generics.ListAPIView):
                  "User {} retrieved transactions for all accounts".format(request.user.email)
             )
         return response
+
 
 class VerifiedOTPView(generics.CreateAPIView):
     serializer_class = OTPVerificationSerializer
