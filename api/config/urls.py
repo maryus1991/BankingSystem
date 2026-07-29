@@ -22,6 +22,7 @@ urlpatterns = [
 
     path("api/v1/auth/", include("djoser.urls")),
     path("api/v1/auth/", include("core_apps.user_auth.urls")),
+    path("api/v1/cards/", include("core_apps.cards.urls")),
 ]
 
 admin.site.site_header = "NextGen Bank Admin"

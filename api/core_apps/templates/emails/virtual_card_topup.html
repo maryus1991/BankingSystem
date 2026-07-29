@@ -1,0 +1,22 @@
+{% extends "emails/base.html" %}
+{% load humanize %}
+
+
+{% block title %}
+    Virtual Card Top-Up Conformation
+{% endblock %}
+
+{% block content %}
+    <h2>Virtual Card Top-Up Conformation</h2>
+    <p> Dear {{ user_full_name }} </p>
+    <p>Your Virtual Card ending in ( {{card_last_four}} ) has been successfully topped up.</p>
+    <p>Detail of th transaction</p>
+        <ul>
+            <li>Amount: {{ amount|intcomma }} {{ currency }}</li>
+            <li>New Balance: {{ new_balance|intcomma }} {{ currency }}</li>
+        </ul>
+
+    <p>If you did not authorize this transaction, please contact our support team immediately.</p>
+    <p>Best Regards, <strong>{{site_name}} </strong> </p>
+    <p> <strong> The {{site_name}} Team </strong> </p>
+{% endblock %}
