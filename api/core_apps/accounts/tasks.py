@@ -88,7 +88,7 @@ def detect_suspicious_activities():
                     f"Suspicious Activities check completed, {num_activities} suspicious activities detected but alert email failed to send "
                 )
 
-        return "Suspicious activities check completed. No Suspicious activities detected  "
+    return "Suspicious activities check completed. No Suspicious activities detected  "
 
 
 @shared_task

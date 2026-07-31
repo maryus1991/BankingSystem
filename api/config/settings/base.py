@@ -323,7 +323,10 @@ CELERY_WORKER_SEND_TASK_EVENTS = True
 CELERY_BEAT_SCHEDULER = {
     "apply-daily-interest":{
         "task": "apply_daily_interest",
-    }
+    },
+    "detect-suspicous-activities":{
+        "task": "detect_suspicious_activities",
+    },
 }
 
 # ================ cookies ====================
