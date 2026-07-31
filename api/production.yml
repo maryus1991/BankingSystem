@@ -1,0 +1,130 @@
+services:
+  api: &api
+    build:
+      context: .
+      dockerfile: ./docker/production/django/Dockerfile
+    user: "1000:1000"
+    volumes:
+      - static_volume:/app/staticfiles
+      - app_logs:/app/logs
+
+    expose:
+      - "8000"
+
+    env_file:
+      - ./.envs/.env.production
+
+    depends_on:
+      - postgres
+      - redis
+      - rabbitmq
+
+    command: /start.sh
+
+    networks:
+      - banker_production_nw
+
+  redis:
+    image: redis:8.8-alpine3.23
+    command: redis-server --appendonly yes
+    networks:
+      - banker_production_nw
+
+  rabbitmq:
+    image: rabbitmq:3-management
+    ports:
+      - "5672:5672"
+      - "15672:15672"
+
+    volumes:
+      - rabbitmq_data:/var/lib/rabbitmq
+      - rabbitmq_log:/var/log/rabbitmq
+
+    networks:
+      - banker_production_nw
+
+  celeryworker:
+    <<: *api
+    user: "1000:1000"
+
+    command: /start-celeryworker.sh
+
+  flower:
+    <<: *api
+    ports:
+      - "5555:5555"
+    user: "1000:1000"
+
+    volumes:
+      - flower_db:/app/flower_db
+    command: /start-flower.sh
+
+  celerybeat:
+    build:
+      context: .
+      dockerfile: ./docker/production/django/Dockerfile
+    command: /start-celerybeat.sh
+    volumes:
+      - static_volumes:/app/staticfiles
+      - app_logs:/app/logs
+
+    env_file:
+      - ./.envs/.env.production
+    user: "1000:1000"
+
+    depends_on:
+      - postgres
+
+      - redis
+      - rabbitmq
+
+    networks:
+      - banker_production_nw
+
+  postgres:
+    build:
+      context: .
+      dockerfile: ./docker/production/postgres/Dockerfile
+    ports:
+      - "5432:5432"
+    volumes:
+      - banker_production_db:/var/lib/postgresql/data
+      - ./backups:/backups
+    env_file:
+      - ./.envs/.env.production
+    networks:
+      - banker_production_nw
+
+  nginx:
+    build:
+      context: ./docker/production/nginx
+      dockerfile: Dockerfile
+
+    restart: always
+    ports:
+      - "8080:80"
+    volumes:
+      - static_volume:/app/staticfiles
+      - logs_store:/var/log/nginx
+      - ./docker/production/nginx/nginx.conf:/etc/nginx/nginx.conf:ro
+      - ./etc/letsencrypt:/etc/letsencrypt:ro
+    depends_on:
+      - api
+    networks:
+      - banker_production_nw
+
+
+
+networks:
+  banker_production_nw:
+    external: true
+
+volumes:
+
+  banker_production_db:
+  logs_store:
+  flower_db:
+  rabbitmq_data:
+  rabbitmq_log:
+  static_volume:
+  app_logs:
