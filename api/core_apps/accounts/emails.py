@@ -1,8 +1,30 @@
 from django.utils.translation import gettext_lazy as _
 from loguru import logger
 from core_apps.accounts.models import BankAccount
-from django.conf import settings
 from core_apps.user_auth.emails import _send_email
+from django.conf import  settings
+
+def send_suspicious_activity_alert(suspicious_activities):
+    email = _send_email(
+        _("Suspicious Activities"),
+        settings.ADMIN_EMAIL,
+        {
+            "site_name": settings.SITE_NAME ,
+            "suspicious_activities": suspicious_activities ,
+
+        },
+        "emails/suspicious_activity_alert.html"
+    )
+
+    try:
+        email.send()
+        logger.info(f"Suspicious Activities email has been sent successfully to ({settings.ADMIN_EMAIL}) : total suspicious_activities is: {len(suspicious_activities)} ")
+        return len(suspicious_activities)
+
+    except Exception as e:
+        logger.error(f"Failed to sent Suspicious Activities email: ({settings.ADMIN_EMAIL}) : total suspicious_activities is: {len(suspicious_activities)} the ERROR : {str(e)}")
+
+        return 0
 
 
 def send_transfer_email(
@@ -108,6 +130,7 @@ def send_withdrawal_email(user, user_email, amount, currency, new_balance, accou
 
     except Exception as e:
         logger.error(f"Failed to sent Withdrawal Conformation email: ({user_email}) and account_number: ({account_number}) the ERROR : {str(e)}")
+
 
 def send_deposit_email(user, user_email, amount, currency, new_balance, account_number):
     email = _send_email(
