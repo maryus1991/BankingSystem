@@ -292,7 +292,7 @@ LOGURU_CONFIG = {
 }
 logger.configure(**LOGURU_CONFIG)
 
-LOGGIN= {
+LOGGING= {
     "version":1,
     "disable_existing_loggers": False,
     "handlers": {"loguru": {"class": "interceptor.InterceptHandler"}},
@@ -320,6 +320,11 @@ CELERY_TASK_SOFT_TIME_LIMIT =  60
 CELERY_BEAT_SCHEDULER = "django_celery_beat.schedulers:DatabaseScheduler"
 CELERY_WORKER_SEND_TASK_EVENTS = True
 
+CELERY_BEAT_SCHEDULER = {
+    "apply-daily-interest":{
+        "task": "apply_daily_interest",
+    }
+}
 
 # ================ cookies ====================
 
