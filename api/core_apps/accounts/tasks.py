@@ -5,7 +5,7 @@ from django.contrib.auth import get_user_model
 from django.core.mail import EmailMessage
 from django.db.models import Q
 from django.utils.translation import gettext_lazy as _
-
+from django.db import transaction
 
 from celery import shared_task
 from dateutil import parser
@@ -19,6 +19,20 @@ from reportlab.platypus import Paragraph, SimpleDocTemplate, Spacer, Table, Tabl
 from .models import BankAccount, Transaction
 
 User = get_user_model()
+
+
+@shared_task
+def apply_daily_interest():
+    saving_account = BankAccount.objects.filter(
+        account_type=BankAccount.AccountType.SAVING,
+    )
+
+    for account in saving_account:
+        with transaction.atomic():
+            account.apply_daily_interest()
+    logger.info(f"Done applying daily interest to {saving_account.count()} saving accounts")
+    return f"Done applying daily interest to {saving_account.count()} saving accounts"
+
 
 @shared_task
 def generate_transaction_pdf(user_id, start_date, end_date, account_number=None):
