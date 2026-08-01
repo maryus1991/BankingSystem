@@ -78,8 +78,6 @@ class TransactionPDFView(APIView):
         )
 
 
-
-
 class TransactionListAPIView(generics.ListAPIView):
     serializer_class = TransactionSerializer
     pagination_class =  StandardResultSetPagination

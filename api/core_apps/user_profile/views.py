@@ -117,7 +117,7 @@ class ProfileDetailAPIView(generics.RetrieveUpdateAPIView):
                         )
                     else:
                         message = (
-                            _("Profile updated successfully. No new account created as one aleatory exits for this type ")
+                            _("Profile updated successfully. No new account created as one already exits for this type ")
                         )
                 else:
                     message = (
@@ -125,11 +125,11 @@ class ProfileDetailAPIView(generics.RetrieveUpdateAPIView):
 
                     )
                 return Response({
-                    "message": message,
+                    "message": str(message),
                     "data":serializer.data
-                        },
+                    },
                     status=status.HTTP_200_OK
-             )
+                )
 
         except serializers.ValidationError as e:
             return Response({"error": e.detail}, status=status.HTTP_400_BAD_REQUEST)
@@ -212,7 +212,7 @@ class NextOfKinDetailAPIView(generics.RetrieveUpdateDestroyAPIView):
         instance =  self.get_object()
         self.perform_destroy(instance)
         return Response(
-            {"message": _("Next Of Kin deleted successfully ")},
+            {"message": str(_("Next Of Kin deleted successfully "))},
                 status=status.HTTP_204_NO_CONTENT
         )
 

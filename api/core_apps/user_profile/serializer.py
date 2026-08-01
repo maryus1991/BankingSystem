@@ -42,7 +42,7 @@ class NextOfKinSerializer(serializers.ModelSerializer):
 
 class ProfileSerializer(serializers.ModelSerializer):
     id = UUIDField(read_only=True)
-    first_name = serializers.CharField(source="user.first_nam")
+    first_name = serializers.CharField(source="user.first_name")
     last_name = serializers.CharField(source="user.last_name")
     username = serializers.ReadOnlyField(source="user.username")
     email = serializers.EmailField(source="user.email", read_only=True)
@@ -54,7 +54,7 @@ class ProfileSerializer(serializers.ModelSerializer):
     phone_number = PhoneNumberField()
     next_of_kin = NextOfKinSerializer(many=True, read_only=True)
     photo = serializers.ImageField(write_only=True, required=False)
-    is_photo = serializers.ImageField(write_only=True, required=False)
+    id_photo = serializers.ImageField(write_only=True, required=False)
     signature_photo = serializers.ImageField(write_only=True, required=False)
     view_count = serializers.SerializerMethodField()
 
@@ -62,7 +62,46 @@ class ProfileSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Profile
-        exclude = ["id"]
+        fields = [
+            "id",
+            "title",
+            "gender",
+            "date_of_birth",
+            "country_of_birth",
+            "place_of_birth",
+            "marital_status",
+            "means_of_identification",
+            "id_issue_date",
+            "id_expiry_date",
+            "passport_number",
+            "nationality",
+            "phone_number",
+            "address",
+            "city",
+            "country",
+            "employment_status",
+            "employer_name",
+            "annul_income",
+            "date_of_employment",
+            "employer_address",
+            "employer_city",
+            "employer_state",
+            "account_currency",
+            "account_type",
+            "photo",
+            "id_photo",
+            "signature_photo",
+            "next_of_kin",
+            "view_count",
+            "first_name",
+            "last_name",
+            "username",
+            "email",
+            "full_name",
+            "id_no",
+            "date_joined",
+
+        ]
 
     def validate(self, attrs:Dict[str, Any])->Dict[str, Any]:
         id_issue_date = attrs.get("id_issue_date")

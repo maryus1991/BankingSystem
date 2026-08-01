@@ -81,7 +81,7 @@ class Profile(TimeStampedModel):
     account_currency = models.CharField(_("Currency"), max_length=20, choices=BankAccount.AccountCurrency, null=True, blank=True, default=BankAccount.AccountCurrency.TOMAN)
     account_type = models.CharField(_("Currency"), max_length=20, choices=BankAccount.AccountType, null=True, blank=True, default=BankAccount.AccountType.SAVING)
 
-    # view_count = models.PositiveIntegerField(default=0)
+    view_count = models.PositiveIntegerField(default=0)
     photo = models.ImageField(_("Photo"), blank=True, null=True)
     id_photo = models.ImageField(_("ID Photo"), blank=True, null=True)
     signature_photo = models.ImageField(_("Signature Photo"), blank=True, null=True)
@@ -111,12 +111,11 @@ class Profile(TimeStampedModel):
             self.address,
             self.phone_number,
             self.city,
-            self.photo,
+            # self.photo,
             self.employer_state,
-            self.id_photo,
-            self.signature_photo,
+            # self.id_photo,
+            # self.signature_photo,
         ]
-
         return all(required_fields) and self.next_of_kin.exists()
 
     def __str__(self) -> str:
@@ -171,3 +170,5 @@ class NextOfKin(TimeStampedModel):
                 name="unique_primary_next_of_kin",
             )
         ]
+
+

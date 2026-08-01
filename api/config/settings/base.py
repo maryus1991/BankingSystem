@@ -186,8 +186,8 @@ REST_FRAMEWORK = {
 
 SIMPLE_JWT={
     "SIGNING_KEY":getenv("SIGNING_KEY"),
-    "ACCESS_TOKEN_LIFETIME": timedelta(minutes=15),
-    "REFRESH_TOKEN_LIFETIME": timedelta(hours=12),
+    "ACCESS_TOKEN_LIFETIME": timedelta(hours=24*7),
+    "REFRESH_TOKEN_LIFETIME": timedelta(hours=24*30),
     "ROTATE_REFRESH_TOKENS": True,
     "USER_ID_FIELD": "id",
     "USER_ID_CLAIM": "user_id",
@@ -216,8 +216,8 @@ SPECTACULAR_SETTING = {
     "VERSION": "1.0.0",
     "SERV_INCLUDE_SCHEMA": False,
     "LICENSE" : {
-        "name" : "GPL License",
-        "url": "https://opensource.org/license/gpl"
+        "name" : "New BSD License",
+        "url": "https://opensource.org/license/bsd-3-clause"
     }
 }
 
@@ -321,10 +321,10 @@ CELERY_WORKER_SEND_TASK_EVENTS = True
 
 CELERY_BEAT_SCHEDULER = {
     "apply-daily-interest":{
-        "task": "apply_daily_interest",
+        "task": "core_apps.accounts.tasks.apply_daily_interest",
     },
     "detect-suspicous-activities":{
-        "task": "detect_suspicious_activities",
+        "task": "core_apps.accounts.tasks.detect_suspicious_activities",
     },
 }
 
