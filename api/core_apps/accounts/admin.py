@@ -2,9 +2,12 @@ from django.contrib import admin
 from django.utils.translation import gettext_lazy as _
 from django.contrib.auth import get_user_model
 
-from .models import BankAccount
+from .models import BankAccount, Transaction
 
 User = get_user_model()
+
+
+admin.site.register(Transaction)
 
 @admin.register(BankAccount)
 class BankAccountAdmin(admin.ModelAdmin):
