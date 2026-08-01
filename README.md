@@ -5,6 +5,7 @@ Modern banking platform built with :
 ![Django](https://img.shields.io/badge/Django-5-green)
 ![Docker](https://img.shields.io/badge/Docker-ready-blue)
 ![License](https://img.shields.io/badge/license-BSD-3)
+<br>
 <img src="https://skillicons.dev/icons?i=python,django,postgresql,redis,docker,nginx,git,linux,celery" alt="Technology stack" />
   
 This project provides a sample backend for a digital banking platform with user authentication, KYC profiles, multi-currency bank accounts, transactions, virtual cards, and role-based access control.
@@ -137,9 +138,10 @@ And for admin page just run the following to create superuser and enter the admi
 ```bash
 make superuser
 ```
+some kind fo information for create admin user :
 
 <img src="docs/installation/createsuperuser.png">
-some kind fo information for create admin user
+
 
 <p>
 admin panel path : <a href="localhost:8080/admin/">localhost:8080/admin/</a>  
