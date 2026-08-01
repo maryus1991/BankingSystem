@@ -8,28 +8,32 @@ BANK_CARD_CODE = getenv("BANK_CARD_CODE")
 CVV_SECRET_KEY = getenv("CVV_SECRET_KEY")
 
 
-def generate_card_number(prefix:str=BANK_CARD_PREFIX, card_code:str=BANK_CARD_CODE, length:int=16)->str:
+import random
+
+def generate_card_number(prefix: str = BANK_CARD_PREFIX, card_code: str = BANK_CARD_CODE, length: int = 16) -> str:
     total_prefix = prefix + card_code
 
-    random_digits_length = length - len(total_prefix)
+    random_digits_length = length - len(total_prefix) - 1
 
     if random_digits_length < 0:
         raise ValueError("Prefix and code are too long for the specified card length")
 
     number = total_prefix
-    number += "".join([str(random.randint(0,9) for _  in range(random_digits_length))])
+    number += "".join(str(random.randint(0, 9)) for _ in range(random_digits_length))
 
     digits = [int(d) for d in number]
 
-    for i in range(len(digits)-1, -1,-2 ):
-        digits[i] *= 2
-        if digits[i] > 9:
-            digits -= 9
+    for i in range(len(digits) - 1, -1, -2):
+        doubled = digits[i] * 2
+        if doubled > 9:
+            doubled -= 9
+        digits[i] = doubled
 
-    check_digits = (10 - sum(digits) % 10) % 10
+    total_sum = sum(digits)
+    check_digit = (10 - total_sum % 10) % 10
 
 
-    return number + str(check_digits)
+    return number + str(check_digit)
 
 
 def generate_cvv(card_number, expiry_date, length:int=4):

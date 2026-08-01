@@ -29,7 +29,7 @@ class VirtualCardListCreateAPIView(generics.ListCreateAPIView):
             return VirtualCardCreateSerializer
         return VirtualCardSerializer
 
-    def create(self, request:Request, *args:any, **kwargs:Any)->Response:
+    def create(self, request:Request, *args:Any, **kwargs:Any)->Response:
         if request.user.virtual_cards.count() >= 3:
             return Response(
                 {
@@ -39,8 +39,8 @@ class VirtualCardListCreateAPIView(generics.ListCreateAPIView):
         serializer = self.get_serializer(data=request.data)
         serializer.is_valid(raise_exception=True)
 
-        bank_account_number = serializer.validated_data.get("bank_account_number")
-        user_bank_accounts = request.user.bank_accounts.all()
+        bank_account_number = serializer.validated_data["bank_account_number"]
+        user_bank_accounts = request.user.bank_account.all()
 
         if not user_bank_accounts.filter(account_number=bank_account_number).exists():
             return Response(
@@ -76,7 +76,8 @@ class VirtualCardDetailAPIView(generics.RetrieveUpdateDestroyAPIView):
     def destroy(self, request:Request, *args:Any, **kwargs:Any)-> Response:
         try:
             instance = self.get_object()
-            if instance.balance >= 0:
+            print(instance.balance)
+            if instance.balance > 0.00:
                 return Response(
                     {"error": "Can not delete a card with non-zero balance  "},
                     status=status.HTTP_400_BAD_REQUEST
