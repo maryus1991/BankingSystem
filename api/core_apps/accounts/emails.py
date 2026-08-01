@@ -97,7 +97,7 @@ def send_transfer_otp_email(email, otp):
         {
             "site_name": settings.SITE_NAME,
             "otp":otp,
-            "expire_time": settings.OTP_EXIRATION
+            "expire_time": settings.OTP_EXPIRATION
         },
         "emails/transfer_otp_email.html"
     )
@@ -121,7 +121,7 @@ def send_withdrawal_email(user, user_email, amount, currency, new_balance, accou
             "new_balance": new_balance,
             "account_number": account_number,
         },
-        "emails/withdrawal_conformation.html"
+        "emails/withdrawal_confirmation.html"
     )
 
     try:

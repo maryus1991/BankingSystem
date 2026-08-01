@@ -114,7 +114,7 @@ def generate_transaction_pdf(user_id, start_date, end_date, account_number=None)
 
         transactions = Transaction.objects.filter(
             Q(sender=user) | Q(receiver=user),
-            created_at__date__reange=[start_date, end_date]
+            created_at__date__range=[start_date, end_date]
         ).order_by("-created_at")
 
         if account_number:

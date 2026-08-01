@@ -18,28 +18,21 @@
             We are writting to inform you that have received a transfer
         </p>
     {% endif %}
-
     <h3>
         Transaction Details:
     </h3>
-
     <ul>
         <li><strong> Amount:</strong> {{amount|intcomma}} {{currency}}</li>
-
         {% if not is_sender %}
             <li><strong> To:</strong> {{receiver_name}} (Account: {{ receiver_account_number }})</li>
-
         {% else %}
             <li><strong> From:</strong> {{sender_name}} (Account: {{ sender_account_number }})</li>
-
         {% endif %}
         <li><strong>Your New Balance:</strong> {{new_balance|intcomma}} {{currency}}</li>
     </ul>
-
     <p>
         If you are not aware of this transaction of have any question, please contact our customer support immediately
     </p>
-
     <p>Best Regards, </p>
     <p> <strong> The {{site_name}} Team </strong> </p>
 {% endblock %}

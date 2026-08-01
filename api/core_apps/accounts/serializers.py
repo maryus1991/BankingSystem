@@ -120,7 +120,7 @@ class OTPVerificationSerializer(serializers.Serializer):
 
     def validate(self, data:dict)-> dict:
         user = self.context["request"].user
-        if not user.verifiy_otp(data["otp"]):
+        if not user.verify_otp(data["otp"]):
             raise serializers.ValidationError("Invalid or Expired OTP")
 
         return data

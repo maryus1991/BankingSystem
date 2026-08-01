@@ -1,5 +1,5 @@
 {% extends "emails/base.html" %}
-{% humanize %}
+{% load humanize %}
 
 {% block title %}
     Withdrawal Confirmation
@@ -10,17 +10,14 @@
 
     <p> Dear <strong>{{ user }}</strong></p>
     <p>We're writting to conform that a withdrawal has been made from your account.</p>
-
     <h3>
         Transaction Details:
     </h3>
-
     <ul>
         <li><strong>Withdrawal Amount:</strong> {{amount|intcomma}} {{currency}}</li>
         <li><strong> Account Number:</strong> {{account_number}} </li>
         <li><strong>New Balance:</strong> {{new_balance|intcomma}} {{currency}}</li>
     </ul>
-
     <p>
         If you are not aware of this transaction of have any question, please contact our customer support immediately
     </p>

@@ -177,7 +177,7 @@ class VerifiedOTPView(generics.CreateAPIView):
                     ,status=status.HTTP_404_NOT_FOUND
                 )
 
-        amount = Decimal(transfer_data)
+        amount = Decimal(transfer_data.get("amount"))
 
         if sender_account.account_balance < amount:
             return Response(
@@ -188,7 +188,7 @@ class VerifiedOTPView(generics.CreateAPIView):
                 )
 
         sender_account.account_balance -= amount
-        receiver_account += amount
+        receiver_account.account_balance += amount
         sender_account.save()
         receiver_account.save()
 
@@ -201,7 +201,7 @@ class VerifiedOTPView(generics.CreateAPIView):
             amount=amount,
             description=transfer_data.get("description", ""),
             transaction_type=Transaction.TransactionType.TRANSFER,
-            transaction_statua=Transaction.TransactionStatus.COMPLETED
+            status=Transaction.TransactionStatus.COMPLETED
         )
 
         del request.session["transfer_data"]
@@ -284,7 +284,7 @@ class InitiateTransferView(generics.CreateAPIView):
         except BankAccount.DoesNotExist:
             return Response(
                 {
-                    "error": "sender account number found or you're not authorized to use this account "
+                    "error": "sender account number not found or you're not authorized to use this account "
                 }
                 , status=status.HTTP_404_NOT_FOUND
             )
@@ -295,7 +295,7 @@ class InitiateTransferView(generics.CreateAPIView):
             request.session["transfer_data"] = {
                 "sender_account": sender_account_number,
                 "receiver_account": receiver_account_number,
-                "amount": str(serializer.validated_data["data"]),
+                "amount": str(serializer.validated_data["amount"]),
                 "descriptor": serializer.validated_data.get("description", ""),
             }
             return Response(
@@ -585,6 +585,16 @@ class DepositView(generics.CreateAPIView):
 
             )
 
+            Transaction.objects.create(
+                user=request.user,
+                receiver=request.user,
+                receiver_account=account,
+                amount=amount,
+                description=f"Deposit to account {account.account_number}",
+                transaction_type=Transaction.TransactionType.DEPOSIT,
+                status=Transaction.TransactionStatus.COMPLETED
+            )
+
             return Response(
                 {
                     "message": f"Successfully deposit {amount} to account {account.account_number}"
@@ -594,7 +604,7 @@ class DepositView(generics.CreateAPIView):
             )
 
         except Exception as E:
-            logger.error(f"Error during deposit: {str(E)}")
+            logger.critical(f"Error during deposit: {str(E)}")
             return Response(
                 {"error": "An error occurred during the deposit"},
                 status=status.HTTP_500_INTERNAL_SERVER_ERROR
