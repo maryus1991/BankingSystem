@@ -7,6 +7,7 @@ media/*
 staticfiles/
 .envs/*
 !.envs/.env.example
+backups/*
 
 ### Python ###
 # Byte-compiled / optimized / DLL files
