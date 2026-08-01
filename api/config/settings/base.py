@@ -319,12 +319,22 @@ CELERY_TASK_SOFT_TIME_LIMIT =  60
 CELERY_BEAT_SCHEDULER = "django_celery_beat.schedulers:DatabaseScheduler"
 CELERY_WORKER_SEND_TASK_EVENTS = True
 
-CELERY_BEAT_SCHEDULER = {
-    "apply-daily-interest":{
+from celery.schedules import crontab
+
+CELERY_BEAT_SCHEDULE = {
+    "apply-daily-interest": {
         "task": "core_apps.accounts.tasks.apply_daily_interest",
+        "schedule": crontab(hour=0, minute=0),
+        "args": (),
+        "kwargs": {},
+        "options": {
+            "expires": 3600,
+        },
     },
-    "detect-suspicous-activities":{
+    "detect-suspicious-activities": {
         "task": "core_apps.accounts.tasks.detect_suspicious_activities",
+        "schedule": crontab(minute="*/5"),  # هر ۵ دقیقه یک‌بار
+
     },
 }
 
