@@ -37,7 +37,8 @@ THIRD_PARTY_APPS = [
     "cloudinary",
     "django_filters",
     "djcelery_email",
-    "django_celery_beat"
+    "django_celery_beat",
+    "django_extensions"
 ]
 
 
