@@ -161,28 +161,27 @@ DEFAULT_PHONE_NUMBER="+989373061991"
 
 
 # ================== API Service Config ==================
-REST_FRAMEWORK= {
+REST_FRAMEWORK = {
     "DEFAULT_SCHEMA_CLASS": "drf_spectacular.openapi.AutoSchema",
-    "DEFAULT_AUTHENTICATED_CLASSES": [
-       "core_apps.common.cookie_auth.CookieAuthentication"
+    "DEFAULT_AUTHENTICATION_CLASSES": [
+        "core_apps.common.cookie_auth.CookieAuth"
     ],
     "DEFAULT_PERMISSION_CLASSES": [
-       "rest_framework.permissions.IsAuthenticated"
+        "rest_framework.permissions.IsAuthenticated"
     ],
     "DEFAULT_PAGINATION_CLASS": "rest_framework.pagination.PageNumberPagination",
-    "DEFAULT_FILTER_BACKEND": [
-        "django_filter.rest_framework.DjangoFilterBackend"
+    "DEFAULT_FILTER_BACKENDS": [
+        "django_filters.rest_framework.DjangoFilterBackend"
     ],
     "PAGE_SIZE": 10,
-    "DEFAULT_THROTTILE_CLASSES":[
+    "DEFAULT_THROTTLE_CLASSES": [
         "rest_framework.throttling.AnonRateThrottle",
         "rest_framework.throttling.UserRateThrottle",
     ],
-    "DEFAULT_THROTTLE_RATE":{
+    "DEFAULT_THROTTLE_RATES": {
         "anon": "50/day",
         "user": "100/day",
     }
-
 }
 
 SIMPLE_JWT={
