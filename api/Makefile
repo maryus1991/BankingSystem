@@ -22,9 +22,6 @@ down-v:
 logs-f:
 	sudo docker compose -f local.yml logs -f $(ARGS)
 
-log:
-	sudo docker compose -f local.yml logs $(ARGS)
-
 banker-config:
 	sudo docker compose -f local.yml config
 
