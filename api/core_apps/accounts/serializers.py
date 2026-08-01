@@ -185,6 +185,7 @@ class AccountVerificationSerializer(serializers.ModelSerializer):
         model = BankAccount
         fields = [
             "kyc_submitted",
+            "kyc_submitted",
             "kyc_verified",
             "verification_date",
             "verification_notes",
@@ -197,6 +198,7 @@ class AccountVerificationSerializer(serializers.ModelSerializer):
         kyv_verified = data.get("kyv_verified")
         verification_date = data.get("verification_date")
         verification_notes = data.get("verification_notes")
+
 
         if kyv_verified:
             if not verification_date:

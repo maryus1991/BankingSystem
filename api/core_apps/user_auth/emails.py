@@ -9,13 +9,22 @@ from celery import shared_task
 
 def _send_email(subject, recipient_list, context, template):
 
-    from_email = settings.DEFAULT_FROM_EMAIL
-    html_email = render_to_string(template, context)
-    plain_email = strip_tags(html_email)
-    email = EmailMultiAlternatives(subject, plain_email, from_email, [recipient_list])
-    email.attach_file(settings.TEMPLATES[0]["DIRS"][0] +'/'+ template, "text/html")
 
-    return email
+    try:
+
+        if isinstance(recipient_list, str):
+            recipient_list = [recipient_list]
+
+        from_email = settings.DEFAULT_FROM_EMAIL
+        html_email = render_to_string(template, context)
+        plain_email = strip_tags(html_email)
+        email = EmailMultiAlternatives(subject, plain_email, from_email, recipient_list)
+        email.attach_file(settings.TEMPLATES[0]["DIRS"][0] +'/'+ template, "text/html")
+
+
+        return email
+    except Exception as e:
+        logger.critical(f"got error in base _send_email function with emails: {recipient_list}| ERROR :{e}")
 
 
 @shared_task

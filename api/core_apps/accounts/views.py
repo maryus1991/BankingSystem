@@ -523,7 +523,7 @@ class AccountVerificationView(generics.UpdateAPIView):
             return Response(
                 {
                     "message": "Account Verification status updated successfully",
-                    "data": self.get_serializer(instance)
+                    "data": self.get_serializer(instance).data
                 }
             )
         return Response(
@@ -562,7 +562,7 @@ class DepositView(generics.CreateAPIView):
 
     @transaction.atomic()
     def create(self, request:Request, *args:Any, **kwargs:Any)->Response:
-        serializer = self.get_serializer(date=request.data)
+        serializer = self.get_serializer(data=request.data)
         serializer.is_valid(raise_exception=True)
 
         account = serializer.context["account"]
@@ -578,9 +578,11 @@ class DepositView(generics.CreateAPIView):
             send_deposit_email(
                 account.user,
                 account.user.email,
+                account.account_balance,
                 account.currency,
                 account.account_balance,
                 account.account_number,
+
             )
 
             return Response(

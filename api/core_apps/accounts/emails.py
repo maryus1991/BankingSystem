@@ -144,7 +144,7 @@ def send_deposit_email(user, user_email, amount, currency, new_balance, account_
             "new_balance": new_balance,
             "account_number": account_number,
         },
-        "emails/deposit_conformation.html"
+        "emails/deposit_confirmation.html"
     )
 
     try:
@@ -154,24 +154,30 @@ def send_deposit_email(user, user_email, amount, currency, new_balance, account_
     except Exception as e:
         logger.error(f"Failed to sent Deposit Conformation email: ({user_email}) and account_number: ({account_number}) the ERROR : {str(e)}")
 
-def send_account_creation_email(user, bank_account):
-    email = _send_email(
-        _("Your New Bank Account has been Created "),
-        user.email,
-        {
-            "user":user,
-            "site_name": settings.SITE_NAME ,
-            "account": bank_account,
-        },
-        "emails/account_created.html"
-    )
+def send_account_creation_email(bank_account):
+
+    logger.critical(bank_account.user.email)
+    logger.critical(bank_account.user)
+    logger.critical(settings.SITE_NAME)
+    logger.critical(bank_account)
+
 
     try:
+        email = _send_email(
+            _("Your New Bank Account has been Created "),
+            bank_account.user.email,
+            {
+                "user": bank_account.user,
+                "site_name": settings.SITE_NAME,
+                "account": bank_account,
+            },
+            "emails/account_created.html"
+        )
         email.send()
-        logger.info(f"Account Creation email has been sent successfully to ({user.email})")
+        logger.info(f"Account Creation email has been sent successfully to ({bank_account.user.email})")
 
     except Exception as e:
-        logger.error(f"Failed to sent Account Creation email ({user.email}) and ({bank_account}) the ERROR : {str(e)}")
+        logger.error(f"Failed to sent Account Creation email ({bank_account.user.email}) and ({bank_account}) the ERROR : {str(e)}")
 
 def send_full_activation_email(account: BankAccount) -> None:
     email = _send_email(
