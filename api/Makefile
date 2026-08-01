@@ -51,3 +51,12 @@ network-inspect:
 
 banker-db:
 	sudo docker compose -f local.yml exec postgres psql --username=maryus --dbname=banker
+
+banker-take-backup:
+	sudo docker compose -f local.yml exec postgres backup.sh
+
+banker-list-backups:
+	sudo docker compose -f local.yml exec postgres backups.sh
+
+banker-restore-backup:
+	sudo docker compose -f local.yml exec postgres restore.sh $(ARGS)

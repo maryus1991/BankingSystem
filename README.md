@@ -93,8 +93,7 @@ This project provides a sample backend for a digital banking platform with user 
 ---
  
 ## 🛠 Tech Stack
-```
-
+ 
 | Category          | Technology                          |
 |-------------------|-------------------------------------|
 | Framework         | Django + Django REST Framework      |
@@ -105,7 +104,8 @@ This project provides a sample backend for a digital banking platform with user 
 | Containerization  | Docker + Docker Compose             |
 | Reverse Proxy     | Nginx                               |
 | Email (Local)     | Mailpit                             |
-```
+ 
+
 ---
 ## 🚀 Installation
 
@@ -138,7 +138,7 @@ And for admin page just run the following to create superuser and enter the admi
 ```bash
 make superuser
 ```
-some kind fo information for create admin user :
+Some kind of information for create admin user :
 
 <img src="docs/installation/createsuperuser.png">
 
@@ -169,6 +169,28 @@ admin panel path : <a href="localhost:8080/admin/">localhost:8080/admin/</a>
 #### For more command read the makefile
 ### Production deployment configuration is available through `production.yml`
 
+---
+## 📂 Database Backup & Restore
+
+This project includes PostgreSQL backup and restore scripts with Makefile commands to simplify database maintenance in self-hosted environments.
+
+| Command                                      | Description                    |
+|----------------------------------------------|--------------------------------|
+| `make banker-take-backup`                    | Create a database backup       |
+| `make banker-list-backups`                   | List available backups         |
+| `make banker-restore-backup <backup name>`   | Restore a database backup      |
+
+### ⚠️ Restore Notice
+
+Before restoring a backup, the database will be flushed to ensure a clean restore process.
+
+> This backup system is **only compatible with PostgreSQL**.
+
+Backup and maintenance scripts are located at:
+
+```text
+api/docker/local/maintenance/
+```
 
 ---
 ## 📂 Project Structure
@@ -193,13 +215,14 @@ BankingSystem/
 └── LICENSE
 ```
 
-
+---
 
 ## 📡 API Documentation
 After starting the project, you can access the interactive API documentation at:
 
 - **Swagger UI**: `http://localhost:8080/api/docs/`
 - **ReDoc**: `http://localhost:8080/api/redoc/`
+---
 
 ## 🔐 Security
 
@@ -211,6 +234,7 @@ Implemented security mechanisms:
 - Role-based permissions
 - Secure transaction verification
 - KYC workflow
+---
 
 ## 🚀 Production Deployment
 
@@ -223,6 +247,9 @@ Production stack:
 - Celery Workers
 - RabbitMQ
 - Docker Compose
+
+---
+
 ## 🌟 Highlights
 
 - Designed a modular banking backend architecture
@@ -230,10 +257,13 @@ Production stack:
 - Built asynchronous transaction processing
 - Designed role-based banking permissions
 - Containerized full development environment
+
+---
 ## License
 
 This project is licensed under the **BSD 3-Clause License**.  
 See the [LICENSE](LICENSE) file for details.
 
+---
 ## 👨‍💻 Author
 **Mostafa EbrahimZadeh** ([@maryus1991](https://github.com/maryus1991))
